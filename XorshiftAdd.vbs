@@ -117,18 +117,11 @@ Function Remainder(a, b)
 End Function
 
 Function Shr(val, num)
-	If val < 0 Then
-		Shr = Fix((val + U32_MAX) / (2 ^ num))
-	Else
-		Shr = Fix(val / (2 ^ num))
-	End If
+	Shr = Fix(U32(val) / (2 ^ num))
 End Function
 
 Function Shl(val, num)
-	Shl = (val And ((2 ^ (32 - num)) - 1)) * (2 ^ num)
-	If I32_MAX < Shl Then
-		Shl = Shl - U32_MAX
-	End If
+	Shl = I32((val And ((2 ^ (32 - num)) - 1)) * (2 ^ num))
 End Function
 
 Sub WriteLine(a)
