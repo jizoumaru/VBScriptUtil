@@ -72,7 +72,7 @@ Class MT19937
 		Next
 		
 		For k = 0 To N - 1 - 1
-			mt(i) = Subt(mt(i) Xor Mul(mt(i - 1) Xor Shr(mt(i - 1), 30), 1566083941), i)
+			mt(i) = Subtract(mt(i) Xor Mul(mt(i - 1) Xor Shr(mt(i - 1), 30), 1566083941), i)
 			i = i + 1
 			
 			If i >= N Then
@@ -151,16 +151,16 @@ Function Mul(ByVal x, ByVal y)
 	Mul = I32(r)
 End Function
 
-Function Subt(a, b)
+Function Subtract(a, b)
 	Dim c
 	c = a - b
 	
 	If c < I32_MIN Then
-		Subt = c + U32_MAX
+		Subtract = c + U32_MAX
 	ElseIf I32_MAX < c Then
-		Subt = c - U32_MAX
+		Subtract = c - U32_MAX
 	Else
-		Subt = c
+		Subtract = c
 	End If
 End Function
 
