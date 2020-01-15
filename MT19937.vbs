@@ -12,7 +12,7 @@ Sub Main()
 	Call mt.InitKeys(Array(&H123, &H234, &H345, &H456))
 	
 	Dim i
-	For i = 1 To 10
+	For i = 1 To 1000
 		Call WriteLine(i & ":" & U32(mt.Generate()))
 	Next
 End Sub
@@ -39,7 +39,7 @@ Class MT19937
 		
 		Dim i
 		For i = 1 To N - 1
-			mt(i) = Add(Mul(1812433253, mt(i - 1) Xor Shr(mt(i - 1), 30)), i)
+			mt(i) = I32(Mul(1812433253, mt(i - 1) Xor Shr(mt(i - 1), 30)) + i)
 		Next
 		
 		mti = N
@@ -57,7 +57,7 @@ Class MT19937
 		Dim k
 		
 		For k = 1 To N
-			mt(i) = Add(Add((mt(i) Xor Mul(mt(i - 1) Xor Shr(mt(i - 1), 30), 1664525)), keys(j)), j)
+			mt(i) = I32((mt(i) Xor Mul(mt(i - 1) Xor Shr(mt(i - 1), 30), 1664525)) + keys(j) + j)
 			i = i + 1
 			j = j + 1
 			
@@ -72,7 +72,7 @@ Class MT19937
 		Next
 		
 		For k = 0 To N - 1 - 1
-			mt(i) = Subtract(mt(i) Xor Mul(mt(i - 1) Xor Shr(mt(i - 1), 30), 1566083941), i)
+			mt(i) = I32((mt(i) Xor Mul(mt(i - 1) Xor Shr(mt(i - 1), 30), 1566083941)) - i)
 			i = i + 1
 			
 			If i >= N Then
@@ -142,44 +142,14 @@ Function Mul(ByVal x, ByVal y)
 		y = Shr(y, 1)
 	Loop
 	
-	If r < I32_MIN Then
-		r = U32_MAX - 1 - Remainder(-1 - r, U32_MAX)
-	ElseIf I32_MAX < r Then
-		r = Remainder(r, U32_MAX)
-	End If
-	
-	Mul = I32(r)
-End Function
-
-Function Subtract(a, b)
-	Dim c
-	c = a - b
-	
-	If c < I32_MIN Then
-		Subtract = c + U32_MAX
-	ElseIf I32_MAX < c Then
-		Subtract = c - U32_MAX
-	Else
-		Subtract = c
-	End If
-End Function
-
-Function Add(a, b)
-	Dim c
-	c = a + b
-	
-	If c < I32_MIN Then
-		Add = c + U32_MAX
-	ElseIf I32_MAX < c Then
-		Add = c - U32_MAX
-	Else
-		Add = c
-	End If
+	Mul = I32(Remainder(r, U32_MAX))
 End Function
 
 Function I32(val)
 	If I32_MAX < val Then
 		I32 = val - U32_MAX
+	ElseIf val < I32_MIN Then
+		I32 = val + U32_MAX
 	Else
 		I32 = val
 	End If
