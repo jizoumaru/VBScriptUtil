@@ -92,7 +92,7 @@ Function Mul(ByVal x, ByVal y)
 		y = Shr(y, 1)
 	Loop
 	
-	Mul = r
+	Mul = I32(Remainder(r, U32_MAX))
 End Function
 
 Function I32(val)
