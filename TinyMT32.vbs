@@ -31,7 +31,7 @@ Class TinyMT32
 		Dim i
 		
 		For i = 1 To 7
-			status(i And 3) = status(i And 3) Xor Add(i, Mul(1812433253, _
+			status(i And 3) = status(i And 3) Xor I32(i + Mul(1812433253, _
 					status((i - 1) And 3) Xor Shr(status((i - 1) And 3), 30)))
 		Next
 		
@@ -66,14 +66,8 @@ Class TinyMT32
 	
 	Private Function Termper(status, param)
 		Dim a
-		a = status(3)
-		
-		Dim b
-		b = Add(status(0), Shr(status(2), 8))
-		
-		a = a Xor b
-		a = a Xor (-(b And 1) And param(3))
-		Termper = a
+		a = I32(status(0) + Shr(status(2), 8))
+		Termper = status(3) Xor a Xor (-(a And 1) And param(3))
 	End Function
 End Class
 
@@ -98,31 +92,14 @@ Function Mul(ByVal x, ByVal y)
 		y = Shr(y, 1)
 	Loop
 	
-	If r < I32_MIN Then
-		r = U32_MAX - 1 - Remainder(-1 - r, U32_MAX)
-	ElseIf I32_MAX < r Then
-		r = Remainder(r, U32_MAX)
-	End If
-	
-	Mul = I32(r)
-End Function
-
-Function Add(a, b)
-	Dim c
-	c = a + b
-	
-	If c < I32_MIN Then
-		Add = c + U32_MAX
-	ElseIf I32_MAX < c Then
-		Add = c - U32_MAX
-	Else
-		Add = c
-	End If
+	Mul = r
 End Function
 
 Function I32(val)
 	If I32_MAX < val Then
 		I32 = val - U32_MAX
+	ElseIf val < I32_MIN Then
+		I32 = val + U32_MAX
 	Else
 		I32 = val
 	End If
