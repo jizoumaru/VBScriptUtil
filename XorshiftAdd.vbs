@@ -27,7 +27,7 @@ Class XorshiftAdd
 		Dim i
 		
 		For i = 1 To 7
-			status(i And 3) = status(i And 3) Xor Add(i, Mul(1812433253, _
+			status(i And 3) = status(i And 3) Xor I32(i + Mul(1812433253, _
 					status((i - 1) And 3) Xor Shr(status((i - 1) And 3), 30)))
 		Next
 		
@@ -40,7 +40,7 @@ Class XorshiftAdd
 
 	Public Function Generate()
 		status_ = NextState(status_)
-		Generate = Add(status_(3), status_(2))
+		Generate = I32(status_(3) + status_(2))
 	End Function
 	
 	Private Function NextState(status)
@@ -75,10 +75,6 @@ Function Mul(ByVal x, ByVal y)
 	Loop
 	
 	Mul = I32(Remainder(r, U32_MAX))
-End Function
-
-Function Add(a, b)
-	Add = I32(a + b)
 End Function
 
 Function I32(val)
