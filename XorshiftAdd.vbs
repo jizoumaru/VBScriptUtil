@@ -12,7 +12,7 @@ Sub Main()
 	Call xa.Init(1234)
 	
 	Dim i
-	For i = 1 To 1000000
+	For i = 1 To 50
 		Call WriteLine(i & ":" & U32(xa.Generate()))
 	Next
 End Sub
@@ -74,31 +74,18 @@ Function Mul(ByVal x, ByVal y)
 		y = Shr(y, 1)
 	Loop
 	
-	If r < I32_MIN Then
-		r = U32_MAX - 1 - Remainder(-1 - r, U32_MAX)
-	ElseIf I32_MAX < r Then
-		r = Remainder(r, U32_MAX)
-	End If
-	
-	Mul = I32(r)
+	Mul = I32(Remainder(r, U32_MAX))
 End Function
 
 Function Add(a, b)
-	Dim c
-	c = a + b
-	
-	If c < I32_MIN Then
-		Add = c + U32_MAX
-	ElseIf I32_MAX < c Then
-		Add = c - U32_MAX
-	Else
-		Add = c
-	End If
+	Add = I32(a + b)
 End Function
 
 Function I32(val)
 	If I32_MAX < val Then
 		I32 = val - U32_MAX
+	ElseIf val < I32_MIN Then
+		I32 = val + U32_MAX
 	Else
 		I32 = val
 	End If
