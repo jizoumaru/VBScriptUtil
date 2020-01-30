@@ -37,7 +37,12 @@ Class LinkedStack
 	End Sub
 	
 	Public Sub Add(val)
-		Set Tail = Node(val, Tail)
+		Dim n
+		Set n = New LinkedStackNode
+		n.Val = val
+		Set n.Nx = Tail
+
+		Set Tail = n
 		Num = Num + 1
 	End Sub
 	
@@ -49,14 +54,6 @@ Class LinkedStack
 		Else
 			Remove = Empty
 		End If
-	End Function
-	
-	Private Function Node(val, nx)
-		Dim n
-		Set n = New LinkedStackNode
-		n.Val = val
-		Set n.Nx = nx
-		Set Node = n
 	End Function
 End Class
 
