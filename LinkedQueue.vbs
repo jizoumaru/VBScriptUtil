@@ -17,7 +17,8 @@ Sub Main()
 End Sub
 
 Class LinkedQueue
-	Private Ring
+	Private Head
+	Private Tail
 	Private Num
 	
 	Public Property Get Count()
@@ -25,9 +26,6 @@ Class LinkedQueue
 	End Property
 	
 	Private Sub Class_Initialize()
-		Set Ring = Node(Empty, Nothing, Nothing)
-		Set Ring.Pr = Ring
-		Set Ring.Nx = Ring
 		Num = 0
 	End Sub
 	
@@ -36,41 +34,41 @@ Class LinkedQueue
 		For i = 1 To Num
 			Call Remove()
 		Next
-		Ring.Nx = Empty
-		Ring.Pr = Empty
-		Ring = Empty
 	End Sub
 	
 	Public Sub Add(val)
-		Set Ring.Pr.Nx = Node(val, Ring.Pr, Ring)
-		Set Ring.Pr = Ring.Pr.Nx
+		Dim n
+		Set n = New LinkedQueueNode
+		n.Val = val
+		
+		If Num = 0 Then
+			Set Head = n
+			Set Tail = n
+		Else
+			Set Tail.Nx = n
+			Set Tail = n
+		End If
 		Num = Num + 1
 	End Sub
 	
 	Public Function Remove()
 		If 0 < Num Then
-			Remove = Ring.Nx.Val
-			Set Ring.Nx = Ring.Nx.Nx
-			Set Ring.Nx.Pr = Ring
+			Remove = Head.Val
 			Num = Num - 1
+			If Num = 0 Then
+				Head = Empty
+				Tail = Empty
+			Else
+				Set Head = Head.Nx
+			End If
 		Else
 			Remove = Empty
 		End If
-	End Function
-	
-	Private Function Node(val, pr, nx)
-		Dim n
-		Set n = New LinkedQueueNode
-		n.Val = val
-		Set n.Pr = pr
-		Set n.Nx = nx
-		Set Node = n
 	End Function
 End Class
 
 Class LinkedQueueNode
 	Public Val
-	Public Pr
 	Public Nx
 End Class
 
