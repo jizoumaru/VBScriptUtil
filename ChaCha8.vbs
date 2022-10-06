@@ -35,21 +35,6 @@ Function Rotl(v, n)
 End Function
 
 Class ClassChaCha20
-	Sub QuarterRound(x, a, b, c, d)
-		x(a) = I32(x(a) + x(b))
-		x(d) = Rotl(x(d) Xor x(a),16)
-		x(c) = I32(x(c) + x(d))
-		x(b) = Rotl(x(b) Xor x(c),12)
-		x(a) = I32(x(a) + x(b))
-		x(d) = Rotl(x(d) Xor x(a), 8)
-		x(c) = I32(x(c) + x(d))
-		x(b) = Rotl(x(b) Xor x(c), 7)
-	End Sub
-	
-	Function ToI32(a, i)
-		ToI32 = a(i + 0) Or Shl(a(i + 1), 8) Or Shl(a(i + 2), 16) Or Shl(a(i + 3), 24)
-	End Function
-	
 	Private State
 	
 	Private Sub Class_Initialize()
@@ -74,7 +59,11 @@ Class ClassChaCha20
 		State(14) = ToI32(b, 32)
 		State(15) = ToI32(b, 36)
 	End Sub
-
+	
+	Function ToI32(a, i)
+		ToI32 = a(i + 0) Or Shl(a(i + 1), 8) Or Shl(a(i + 2), 16) Or Shl(a(i + 3), 24)
+	End Function
+	
 	Sub Encrypt(m)
 		Dim j
 		j = 0
@@ -128,6 +117,17 @@ Class ClassChaCha20
 			b(i * 4 + 2) = Shr(x(i), 16) And &HFF
 			b(i * 4 + 3) = Shr(x(i), 24) And &HFF
 		Next
+	End Sub
+	
+	Sub QuarterRound(x, a, b, c, d)
+		x(a) = I32(x(a) + x(b))
+		x(d) = Rotl(x(d) Xor x(a),16)
+		x(c) = I32(x(c) + x(d))
+		x(b) = Rotl(x(b) Xor x(c),12)
+		x(a) = I32(x(a) + x(b))
+		x(d) = Rotl(x(d) Xor x(a), 8)
+		x(c) = I32(x(c) + x(d))
+		x(b) = Rotl(x(b) Xor x(c), 7)
 	End Sub
 End Class
 
