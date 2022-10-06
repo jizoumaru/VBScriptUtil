@@ -34,7 +34,7 @@ Function Rotl(v, n)
 	Rotl = Shl(v, n) Or Shr(v, 32 - n)
 End Function
 
-Class ClassChaCha20
+Class ClassChaCha8
 	Private State
 	
 	Private Sub Class_Initialize()
@@ -149,7 +149,7 @@ End Sub
 
 Sub Main()
 	Dim chacha
-	Set chacha = New ClassChaCha20
+	Set chacha = New ClassChaCha8
 	
 	Call chacha.Init(Seq(40))
 	
