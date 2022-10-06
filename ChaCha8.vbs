@@ -34,7 +34,7 @@ Function Rotl(v, n)
 	Rotl = Shl(v, n) Or Shr(v, 32 - n)
 End Function
 
-Class ClassChaCha8
+Class ClassChaCha20
 	Sub QuarterRound(x, a, b, c, d)
 		x(a) = I32(x(a) + x(b))
 		x(d) = Rotl(x(d) Xor x(a),16)
@@ -76,10 +76,6 @@ Class ClassChaCha8
 	End Sub
 
 	Sub Encrypt(m)
-		For i = 0 To UBound(State)
-			Call WriteLine(i & " " & State(i))
-		Next
-		
 		Dim j
 		j = 0
 		
@@ -128,12 +124,24 @@ Class ClassChaCha8
 		For i = 0 To 15
 			x(i) = I32(x(i) + State(i))
 			b(i * 4 + 0) = x(i) And &HFF
-			b(i * 4 + 1) = x(i) \ &H100 And &HFF
-			b(i * 4 + 2) = x(i) \ &H10000 And &HFF
-			b(i * 4 + 3) = x(i) \ &H1000000 And &HFF
+			b(i * 4 + 1) = Shr(x(i),  8) And &HFF
+			b(i * 4 + 2) = Shr(x(i), 16) And &HFF
+			b(i * 4 + 3) = Shr(x(i), 24) And &HFF
 		Next
 	End Sub
 End Class
+
+Function Seq(n)
+	Dim a
+	ReDim a(n - 1)
+	
+	Dim i
+	For i = 0 To UBound(a)
+		a(i) = i And &HFF
+	Next
+	
+	Seq = a
+End Function
 
 Sub WriteLine(s)
 	Call WScript.StdOut.WriteLine(s)
@@ -141,33 +149,18 @@ End Sub
 
 Sub Main()
 	Dim chacha
-	Set chacha = New ClassChaCha8
+	Set chacha = New ClassChaCha20
 	
-	Dim b
-	ReDim b(39)
-	
-	Dim i
-	For i = 0 To UBound(b)
-		b(i) = i
-	Next
-	
-	Call chacha.Init(b)
+	Call chacha.Init(Seq(40))
 	
 	Dim m
-	ReDim m(65535)
-	
-	For i = 0 To UBound(m)
-		m(i) = i And &HFF
-	Next
-	
-	For i = 0 To UBound(m)
-		Call WriteLine("m " & m(i))
-	Next
+	m = Seq(65536)
 	
 	Call chacha.Encrypt(m)
 	
+	Dim i
 	For i = 0 To UBound(m)
-		Call WriteLine("c " & m(i))
+		Call WriteLine(m(i))
 	Next
 End Sub
 
