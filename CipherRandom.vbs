@@ -203,7 +203,7 @@ Class CipherRandom
 		r = (m - bound + 1) Mod bound
 		
 		Do
-			n = NextInt()
+			n = NextInt() And m
 			
 			If r <= n Then
 				Exit Do
