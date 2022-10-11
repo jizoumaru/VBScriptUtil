@@ -48,7 +48,7 @@ Function GetUUID()
 End Function
 
 Class ChaCha8
-	Sub Encrypt(m)
+	Function Encrypt(m)
 		Dim s, j, b, l, i
 		
 		ReDim s(15)
@@ -86,7 +86,9 @@ Class ChaCha8
 				j = j + 1
 			Next
 		Next
-	End Sub
+		
+		Encrypt = 40
+	End Function
 
 	Sub Stir(s, b)
 		Dim x, i
@@ -162,14 +164,9 @@ Class CipherRandom
 		a(39) = Fix((t - Fix(t)) * 100)
 	End Sub
 	
-	Sub Fill()
-		Call Cipher.Encrypt(Buffer)
-		Index = 40
-	End Sub
-	
 	Function NextByte()
 		If Index > UBound(Buffer) Then
-			Call Fill()
+			Index = Cipher.Encrypt(Buffer)
 		End If
 		
 		NextByte = Buffer(Index)
@@ -178,7 +175,7 @@ Class CipherRandom
 
 	Function NextInt()
 		If Index > UBound(Buffer) - 4 Then
-			Call Fill()
+			Index = Cipher.Encrypt(Buffer)
 		End If
 		
 		NextInt = I8ToI32(Buffer, Index)
@@ -195,7 +192,7 @@ Sub Main()
 	Set random = New CipherRandom
 	
 	Dim i
-	For i = 1 To 100
+	For i = 1 To 10000
 		Call WriteLine(random.NextInt())
 	Next
 End Sub
