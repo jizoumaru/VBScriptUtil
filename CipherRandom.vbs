@@ -1,5 +1,19 @@
 Option Explicit
 
+Call Main()
+
+Sub Main()
+	Dim r, a, i
+	
+	Set r = New CipherRandom
+	a = Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+	
+	For i = 1 To 10
+		Call r.Shuffle(a)
+		Call WriteLine(Join(a, ","))
+	Next
+End Sub
+
 Function Shr(v, n)
 	Shr = I32(Fix(U32(v) / (2 ^ n)))
 End Function
@@ -181,20 +195,35 @@ Class CipherRandom
 		NextInt = I8ToI32(Buffer, Index)
 		Index = Index + 4
 	End Function
+	
+	Function NextBound(bound)
+		Const m = &H7FFFFFFF
+		Dim r, n
+		
+		r = (m - bound + 1) Mod bound
+		
+		Do
+			n = NextInt()
+			
+			If r <= n Then
+				Exit Do
+			End If
+		Loop
+		
+		NextBound = n Mod bound
+	End Function
+	
+	Sub Shuffle(a)
+		Dim i, j, t
+		For i = UBound(a) To 1 Step -1
+			j = NextBound(i + 1)
+			t = a(i)
+			a(i) = a(j)
+			a(j) = t
+		Next
+	End Sub
 End Class
 
 Sub WriteLine(s)
 	Call WScript.StdOut.WriteLine(s)
 End Sub
-
-Sub Main()
-	Dim random
-	Set random = New CipherRandom
-	
-	Dim i
-	For i = 1 To 10000
-		Call WriteLine(random.NextInt())
-	Next
-End Sub
-
-Call Main()
